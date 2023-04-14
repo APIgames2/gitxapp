@@ -1,22 +1,54 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Test</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+  <body>
+    <form>
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name"><br><br>
+      <label for="age">Age:</label>
+      <input type="text" id="age" name="age"><br><br>
+      <button type="button" onclick="postData()">Submit</button>
+    </form>
+    <br>
+    <div id="response"></div>
+    <h1>Hi</h1>
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title>replit</title>
-  <link href="style.css" rel="stylesheet" type="text/css" />
-</head>
+    <div id="data"></div>
+    <script>
+      $(document).ready(function() {
+        $.get("http://localhost:3000/getData", function(data, status) {
+          if (status === "success") {
+            var html = "<table><tr><th>ID</th><th>Name</th><th>Age</th></tr>";
+            for (var i = 0; i < data.length; i++) {
+              html += "<tr><td>" + data[i].id + "</td><td>" + data[i].name + "</td><td>" + data[i].age + "</td></tr>";
+            }
+            html += "</table>";
+            $("#data").html(html);
+          } else {
+            $("#data").html("Error retrieving data");
+          }
+        });
+      });
+    </script>
+    <script>
+      async function postData() {
+        const name = document.getElementById("name").value;
+        const age = document.getElementById("age").value;
+        const response = await fetch('http://localhost:3000/insertData', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ name, age })
+        });
+        const data = await response.json();
+        document.getElementById("response").innerHTML = JSON.stringify(data);
+      }
+    </script>
 
-<body>
-  Hello It is gitxapp
-  <script src="script.js"></script>
-
-  <!--
-  This script places a badge on your repl's full-browser view back to your repl's cover
-  page. Try various colors for the theme: dark, light, red, orange, yellow, lime, green,
-  teal, blue, blurple, magenta, pink!
-  -->
-</body>
-
+  </body>
 </html>
